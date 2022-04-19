@@ -258,7 +258,7 @@ where
 
             let subset = precomp_table.at_point(start_idx);
             let scalars = match points {
-                ScalarList::Slice(ref s) => &s[start_idx..end_idx],
+                ScalarList::Slice(s) => &s[start_idx..end_idx],
                 ScalarList::Getter(ref getter, _) => {
                     for i in start_idx..end_idx {
                         scalar_storage[i - start_idx] = getter(i);
@@ -267,7 +267,7 @@ where
                 }
             };
 
-            multiscalar(&scalars, &subset, nbits)
+            multiscalar(scalars, &subset, nbits)
         }) // Accumulate results
         .reduce(G::Curve::identity, |mut acc, part| {
             acc.add_assign(&part);
@@ -282,7 +282,8 @@ fn prefetch<T>(p: *const T) {
     }
 }
 
-#[cfg(target_arch = "aarch64")]
+// Requires nightly for aarch64
+#[cfg(all(nightly, target_arch = "aarch64"))]
 fn prefetch<T>(p: *const T) {
     unsafe {
         use std::arch::aarch64::*;
@@ -290,8 +291,8 @@ fn prefetch<T>(p: *const T) {
     }
 }
 
-#[cfg(not(any(target_arch = "x86_64", target_arch = "aarch64")))]
-fn prefetch<T>(p: *const T) {}
+#[cfg(not(any(target_arch = "x86_64", all(target_arch = "aarch64", nightly))))]
+fn prefetch<T>(_: *const T) {}
 
 #[cfg(test)]
 mod tests {

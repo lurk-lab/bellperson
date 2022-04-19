@@ -63,11 +63,20 @@ The gpu extension contains some env vars that may be set externally to this libr
 
 - `RAYON_NUM_THREADS`
 
-   Restricts the number of threads used in the library to roughly twice that number (best effort). In the past this was done using `BELLMAN_NUM_CPUS` which is now deprecated. The default is set to the number of logical cores reported on the machine.
+   Restricts the number of threads used in the library to roughly that number (best effort). In the past this was done using `BELLMAN_NUM_CPUS` which is now deprecated. The default is set to the number of logical cores reported on the machine.
 
    ```rust
     // Example
     env::set_var("RAYON_NUM_THREADS", "6");
+   ```
+
+ - `EC_GPU_NUM_THREADS`
+
+   Restricts the number of threads used by the FFT and multiexponentiation calculations. In the past this setting was shared with `RAYON_NUM_THREADS`, now they are separate settings that can be controlled independently. The default is set to the number of logical cores reported on the machine.
+
+   ```rust
+    // Example
+    env::set_var("EC_GPU_NUM_THREADS", "6");
    ```
 
  - `BELLMAN_GPU_FRAMEWORK`
@@ -143,6 +152,12 @@ RUST_LOG=info cargo test --features cuda,opencl -- --exact multiexp::gpu_multiex
 Bellperson uses `rust-gpu-tools` as its CUDA/OpenCL backend, therefore you may see a
 directory named `~/.rust-gpu-tools` in your home folder, which contains the
 compiled binaries of OpenCL kernels used in this repository.
+
+### Experimental
+
+The instance aggregation provided by `groth16::aggregate::prove::aggregate_proofs_and_instances()` has not yet been
+audited so should be used with caution. It is not recommended to use instance aggregation in production until it has
+been audited.
 
 ## License
 

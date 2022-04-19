@@ -431,11 +431,12 @@ fn test_create_batch_single() {
     assert!(verify_proof(&pvk, &proof_single_1, &[Fr::one()]).unwrap());
     assert!(verify_proof(&pvk, &proof_single_2, &[Fr::one()]).unwrap());
     for proof in &proof_batch {
-        assert!(verify_proof(&pvk, &proof, &[Fr::one()]).unwrap());
+        assert!(verify_proof(&pvk, proof, &[Fr::one()]).unwrap());
     }
 }
 
 #[test]
+#[allow(clippy::manual_swap)]
 fn test_verify_random_single() {
     use crate::groth16::{create_random_proof, generate_random_parameters, Proof};
     use blstrs::{Bls12, G1Projective, G2Projective, Scalar as Fr};
@@ -495,9 +496,7 @@ fn test_verify_random_single() {
 
         {
             let mut fake_proof = proof.clone();
-            let c = fake_proof.c;
-            fake_proof.c = fake_proof.a;
-            fake_proof.a = c;
+            std::mem::swap(&mut fake_proof.c, &mut fake_proof.a);
             assert!(!verify_proof(&pvk, &fake_proof, &[Fr::one()]).unwrap());
         }
 
@@ -514,6 +513,7 @@ fn test_verify_random_single() {
 }
 
 #[test]
+#[allow(clippy::manual_swap)]
 fn test_verify_random_batch() {
     use crate::groth16::{
         create_random_proof_batch, generate_random_parameters, verify_proofs_batch, Proof,
@@ -606,9 +606,8 @@ fn test_verify_random_batch() {
 
         {
             let mut fake_proof = proof.clone();
-            let c = fake_proof[0].c;
-            fake_proof[0].c = fake_proof[0].a;
-            fake_proof[0].a = c;
+            let fp0 = &mut fake_proof[0];
+            std::mem::swap(&mut fp0.c, &mut fp0.a);
             assert!(!verify_proofs_batch(
                 &pvk,
                 &mut rng,
