@@ -19,7 +19,7 @@ use std::io::{self, Read, Write};
 use std::sync::Arc;
 
 #[cfg(feature = "memmap")]
-pub use memmap_uses::*;
+use memmap_uses::*;
 
 use super::VerifyingKey;
 
