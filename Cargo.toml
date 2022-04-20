@@ -21,7 +21,7 @@ group = "0.11.0"
 rand_core = "0.6"
 byteorder = "1"
 log = "0.4.8"
-getrandom = { version = "0.2.5" }
+getrandom = { version = "0.2.5", optional = true }
 lazy_static = "1.4.0"
 rand = "0.8"
 rayon = "1.5.0"
