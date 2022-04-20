@@ -7,8 +7,7 @@ use ec_gpu_gen::multiexp_cpu::SourceBuilder;
 use byteorder::{BigEndian, ReadBytesExt, WriteBytesExt};
 
 #[cfg(feature = "memmap")]
-#[path = ""]
-pub mod memmap_uses {
+mod memmap_uses {
     pub use crate::groth16::MappedParameters;
     pub use memmap::{Mmap, MmapOptions};
     pub use std::fs::File;
