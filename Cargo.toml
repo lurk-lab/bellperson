@@ -21,11 +21,9 @@ group = "0.12.0"
 rand_core = "0.6"
 byteorder = "1"
 log = "0.4.8"
-getrandom = { version = "0.2.5", optional = true }
 lazy_static = "1.4.0"
 rand = "0.8"
 rayon = "1.5.0"
-memmap = { version = "0.7.0", optional = true }
 thiserror = "1.0.10"
 num_cpus = "1"
 crossbeam-channel = "0.5.0"
@@ -42,6 +40,12 @@ ec-gpu-gen = { version = "0.3.0", default-features = false, features = ["fft", "
 
 fs2 = { version = "0.4.3", optional = true }
 
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+memmap = "0.7.0"
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+getrandom = { version = "0.2.5", features = ["js"] }
+
 [dev-dependencies]
 hex-literal = "0.3"
 rand_xorshift = "0.3"
@@ -54,12 +58,12 @@ subtle = "2.2.1"
 temp-env = "0.2.0"
 
 [features]
-default = ["groth16", "memmap" ]
+default = ["groth16"]
+# Currently unsupported on WASM due to fs2
 cuda = ["ec-gpu-gen/cuda", "fs2", "blstrs/gpu"]
+# Currently unsupported on WASM due to fs2 and libc
 opencl = ["ec-gpu-gen/opencl", "fs2", "blstrs/gpu"]
 groth16 = []
-# Wasm friendly build. Disable default features for this.
-wasm = [ "getrandom/js", "groth16" ]
 
 # This feature disables/modifies long running tests to make the suitable for code coverage
 # reporting
@@ -89,3 +93,7 @@ members = [
 
 [build-dependencies]
 rustversion = "1.0.6"
+
+[patch.crates-io]
+blstrs = { git = "https://github.com/lurk-lang/blstrs", branch = "sb/wasm-lurk-compat" }
+ec-gpu-gen = { git = "https://github.com/lurk-lang/ec-gpu", branch = "sb/wasm-lurk-compat" }
