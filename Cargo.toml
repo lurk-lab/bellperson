@@ -95,5 +95,4 @@ members = [
 rustversion = "1.0.6"
 
 [patch.crates-io]
-blstrs = { git = "https://github.com/lurk-lang/blstrs", branch = "sb/wasm-lurk-compat" }
 ec-gpu-gen = { git = "https://github.com/lurk-lang/ec-gpu", branch = "sb/wasm-lurk-compat" }
