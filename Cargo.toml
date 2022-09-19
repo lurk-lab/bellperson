@@ -36,15 +36,12 @@ blstrs = "0.5.0"
 pairing = "0.22"
 yastl = "0.1.2"
 ec-gpu = { version = "0.1.0" }
-ec-gpu-gen = { version = "0.3.0", default-features = false, features = ["fft", "multiexp"] }
+ec-gpu-gen = { version = "0.4.0", default-features = false }
 
 fs2 = { version = "0.4.3", optional = true }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 memmap = "0.7.0"
-
-[target.'cfg(target_arch = "wasm32")'.dependencies]
-getrandom = { version = "0.2.5", features = ["js"] }
 
 [dev-dependencies]
 hex-literal = "0.3"
@@ -59,9 +56,7 @@ temp-env = "0.2.0"
 
 [features]
 default = ["groth16"]
-# Currently unsupported on WASM due to fs2
 cuda = ["ec-gpu-gen/cuda", "fs2", "blstrs/gpu"]
-# Currently unsupported on WASM due to fs2 and libc
 opencl = ["ec-gpu-gen/opencl", "fs2", "blstrs/gpu"]
 groth16 = []
 
