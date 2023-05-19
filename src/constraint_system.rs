@@ -156,6 +156,44 @@ pub trait ConstraintSystem<Scalar: PrimeField>: Sized + Send {
             "ConstraintSystem::extend must be implemented for types implementing ConstraintSystem"
         );
     }
+
+    /// ConstraintSystems that are witness generators need not assemble the actual constraints. Rather, they exist only
+    /// to efficiently create a witness.
+    fn is_witness_generator(&mut self) -> bool {
+        false
+    }
+
+    fn extend_inputs(&mut self, _new_inputs: &[Scalar]) {
+        assert!(!self.is_witness_generator());
+        unimplemented!()
+    }
+
+    fn extend_aux(&mut self, _new_aux: &[Scalar]) {
+        assert!(!self.is_witness_generator());
+        unimplemented!()
+    }
+
+    fn allocate_empty(
+        &mut self,
+        _aux_n: usize,
+        _inputs_n: usize,
+    ) -> (&mut [Scalar], &mut [Scalar]) {
+        // This method should only ever be called on witness generators.
+        assert!(self.is_witness_generator());
+        unimplemented!()
+    }
+
+    fn allocate_empty_inputs(&mut self, _n: usize) -> &mut [Scalar] {
+        // This method should only ever be called on witness generators.
+        assert!(self.is_witness_generator());
+        unimplemented!()
+    }
+
+    fn allocate_empty_aux(&mut self, _n: usize) -> &mut [Scalar] {
+        // This method should only ever be called on witness generators.
+        assert!(self.is_witness_generator());
+        unimplemented!()
+    }
 }
 
 /// This is a "namespaced" constraint system which borrows a constraint system (pushing
@@ -221,6 +259,22 @@ impl<'cs, Scalar: PrimeField, CS: ConstraintSystem<Scalar>> ConstraintSystem<Sca
 
     fn get_root(&mut self) -> &mut Self::Root {
         self.0.get_root()
+    }
+
+    fn is_witness_generator(&mut self) -> bool {
+        self.get_root().is_witness_generator()
+    }
+
+    fn extend_inputs(&mut self, new_inputs: &[Scalar]) {
+        self.get_root().extend_inputs(new_inputs)
+    }
+
+    fn extend_aux(&mut self, new_aux: &[Scalar]) {
+        self.get_root().extend_aux(new_aux)
+    }
+
+    fn allocate_empty(&mut self, aux_n: usize, inputs_n: usize) -> (&mut [Scalar], &mut [Scalar]) {
+        self.get_root().allocate_empty(aux_n, inputs_n)
     }
 }
 
