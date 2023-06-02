@@ -40,6 +40,7 @@ pub trait SizedWitness<Scalar: PrimeField> {
     }
 }
 
+#[derive(Debug, PartialEq)]
 /// A `ConstraintSystem` which calculates witness values for a concrete instance of an R1CS circuit.
 pub struct WitnessCS<Scalar>
 where
@@ -48,30 +49,6 @@ where
     // Assignments of variables
     pub(crate) input_assignment: Vec<Scalar>,
     pub(crate) aux_assignment: Vec<Scalar>,
-}
-
-use std::fmt;
-
-impl<Scalar> fmt::Debug for WitnessCS<Scalar>
-where
-    Scalar: PrimeField,
-{
-    fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
-        fmt.debug_struct("WitnessCS")
-            .field("input_assignment", &self.input_assignment)
-            .field("aux_assignment", &self.aux_assignment)
-            .finish()
-    }
-}
-
-impl<Scalar> PartialEq for WitnessCS<Scalar>
-where
-    Scalar: PrimeField,
-{
-    fn eq(&self, other: &WitnessCS<Scalar>) -> bool {
-        self.input_assignment == other.input_assignment
-            && self.aux_assignment == other.aux_assignment
-    }
 }
 
 impl<Scalar> ConstraintSystem<Scalar> for WitnessCS<Scalar>
