@@ -130,7 +130,7 @@ where
 
     ////////////////////////////////////////////////////////////////////////////////
     // Witness generator
-    fn is_witness_generator(&mut self) -> bool {
+    fn is_witness_generator(&self) -> bool {
         true
     }
 

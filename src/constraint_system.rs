@@ -159,7 +159,7 @@ pub trait ConstraintSystem<Scalar: PrimeField>: Sized + Send {
 
     /// ConstraintSystems that are witness generators need not assemble the actual constraints. Rather, they exist only
     /// to efficiently create a witness.
-    fn is_witness_generator(&mut self) -> bool {
+    fn is_witness_generator(&self) -> bool {
         false
     }
 
@@ -261,20 +261,20 @@ impl<'cs, Scalar: PrimeField, CS: ConstraintSystem<Scalar>> ConstraintSystem<Sca
         self.0.get_root()
     }
 
-    fn is_witness_generator(&mut self) -> bool {
-        self.get_root().is_witness_generator()
+    fn is_witness_generator(&self) -> bool {
+        self.0.is_witness_generator()
     }
 
     fn extend_inputs(&mut self, new_inputs: &[Scalar]) {
-        self.get_root().extend_inputs(new_inputs)
+        self.0.extend_inputs(new_inputs)
     }
 
     fn extend_aux(&mut self, new_aux: &[Scalar]) {
-        self.get_root().extend_aux(new_aux)
+        self.0.extend_aux(new_aux)
     }
 
     fn allocate_empty(&mut self, aux_n: usize, inputs_n: usize) -> (&mut [Scalar], &mut [Scalar]) {
-        self.get_root().allocate_empty(aux_n, inputs_n)
+        self.0.allocate_empty(aux_n, inputs_n)
     }
 }
 
@@ -338,5 +338,45 @@ impl<'cs, Scalar: PrimeField, CS: ConstraintSystem<Scalar>> ConstraintSystem<Sca
 
     fn get_root(&mut self) -> &mut Self::Root {
         (**self).get_root()
+    }
+
+    fn namespace<NR, N>(&mut self, name_fn: N) -> Namespace<'_, Scalar, Self::Root>
+    where
+        NR: Into<String>,
+        N: FnOnce() -> NR,
+    {
+        (**self).namespace(name_fn)
+    }
+
+    fn is_extensible() -> bool {
+        CS::is_extensible()
+    }
+
+    fn extend(&mut self, _other: Self) {
+        unimplemented!()
+    }
+
+    fn is_witness_generator(&self) -> bool {
+        (**self).is_witness_generator()
+    }
+
+    fn extend_inputs(&mut self, new_inputs: &[Scalar]) {
+        (**self).extend_inputs(new_inputs)
+    }
+
+    fn extend_aux(&mut self, new_aux: &[Scalar]) {
+        (**self).extend_aux(new_aux)
+    }
+
+    fn allocate_empty(&mut self, aux_n: usize, inputs_n: usize) -> (&mut [Scalar], &mut [Scalar]) {
+        (**self).allocate_empty(aux_n, inputs_n)
+    }
+
+    fn allocate_empty_inputs(&mut self, n: usize) -> &mut [Scalar] {
+        (**self).allocate_empty_inputs(n)
+    }
+
+    fn allocate_empty_aux(&mut self, n: usize) -> &mut [Scalar] {
+        (**self).allocate_empty_aux(n)
     }
 }
