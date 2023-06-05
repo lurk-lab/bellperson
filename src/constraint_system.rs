@@ -172,9 +172,9 @@ pub trait ConstraintSystem<Scalar: PrimeField>: Sized + Send {
     ///
     /// # Panics
     ///
-    /// Panics if called on a `ConstraintSystem` that is also a witness generator.
+    /// Panics if called on a `ConstraintSystem` that is not a witness generator.
     fn extend_inputs(&mut self, _new_inputs: &[Scalar]) {
-        assert!(!self.is_witness_generator());
+        assert!(self.is_witness_generator());
         unimplemented!()
     }
 
@@ -182,9 +182,9 @@ pub trait ConstraintSystem<Scalar: PrimeField>: Sized + Send {
     ///
     /// # Panics
     ///
-    /// Panics if called on a `ConstraintSystem` that is also a witness generator.
+    /// Panics if called on a `ConstraintSystem` that is not a witness generator.
     fn extend_aux(&mut self, _new_aux: &[Scalar]) {
-        assert!(!self.is_witness_generator());
+        assert!(self.is_witness_generator());
         unimplemented!()
     }
 
