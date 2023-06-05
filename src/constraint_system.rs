@@ -157,22 +157,42 @@ pub trait ConstraintSystem<Scalar: PrimeField>: Sized + Send {
         );
     }
 
+    /// Determines if the current `ConstraintSystem` instance is a witness generator.
     /// ConstraintSystems that are witness generators need not assemble the actual constraints. Rather, they exist only
     /// to efficiently create a witness.
+    ///
+    /// # Returns
+    ///
+    /// * `false` - By default, a `ConstraintSystem` is not a witness generator.
     fn is_witness_generator(&self) -> bool {
         false
     }
 
+    /// Extend the inputs of the `ConstraintSystem`.
+    ///
+    /// # Panics
+    ///
+    /// Panics if called on a `ConstraintSystem` that is also a witness generator.
     fn extend_inputs(&mut self, _new_inputs: &[Scalar]) {
         assert!(!self.is_witness_generator());
         unimplemented!()
     }
 
+    /// Extend the auxiliary inputs of the `ConstraintSystem`.
+    ///
+    /// # Panics
+    ///
+    /// Panics if called on a `ConstraintSystem` that is also a witness generator.
     fn extend_aux(&mut self, _new_aux: &[Scalar]) {
         assert!(!self.is_witness_generator());
         unimplemented!()
     }
 
+    /// Allocate empty space for the auxiliary inputs and the main inputs of the `ConstraintSystem`.
+    ///
+    /// # Panics
+    ///
+    /// Panics if called on a `ConstraintSystem` that is not a witness generator.
     fn allocate_empty(
         &mut self,
         _aux_n: usize,
@@ -183,12 +203,22 @@ pub trait ConstraintSystem<Scalar: PrimeField>: Sized + Send {
         unimplemented!()
     }
 
+    /// Allocate empty space for the main inputs of the `ConstraintSystem`.
+    ///
+    /// # Panics
+    ///
+    /// Panics if called on a `ConstraintSystem` that is not a witness generator.
     fn allocate_empty_inputs(&mut self, _n: usize) -> &mut [Scalar] {
         // This method should only ever be called on witness generators.
         assert!(self.is_witness_generator());
         unimplemented!()
     }
 
+    /// Allocate empty space for the auxiliary inputs of the `ConstraintSystem`.
+    ///
+    /// # Panics
+    ///
+    /// Panics if called on a `ConstraintSystem` that is not a witness generator.
     fn allocate_empty_aux(&mut self, _n: usize) -> &mut [Scalar] {
         // This method should only ever be called on witness generators.
         assert!(self.is_witness_generator());
