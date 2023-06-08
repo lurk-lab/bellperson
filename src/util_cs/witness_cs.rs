@@ -157,6 +157,14 @@ where
 
         (allocated_aux, allocated_inputs)
     }
+
+    fn inputs_slice(&self) -> &[Scalar] {
+        &self.input_assignment
+    }
+
+    fn aux_slice(&self) -> &[Scalar] {
+        &self.aux_assignment
+    }
 }
 
 impl<Scalar: PrimeField> WitnessCS<Scalar> {

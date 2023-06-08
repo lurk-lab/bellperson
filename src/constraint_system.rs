@@ -224,6 +224,26 @@ pub trait ConstraintSystem<Scalar: PrimeField>: Sized + Send {
         assert!(self.is_witness_generator());
         unimplemented!()
     }
+
+    /// Returns the constraint system's inputs as a slice of `Scalar`s.
+    ///
+    /// # Panics
+    ///
+    /// Panics if called on a `ConstraintSystem` that is not a witness generator.
+    fn inputs_slice(&self) -> &[Scalar] {
+        assert!(self.is_witness_generator());
+        unimplemented!()
+    }
+
+    /// Returns the constraint system's aux witness as a slice of `Scalar`s.
+    ///
+    /// # Panics
+    ///
+    /// Panics if called on a `ConstraintSystem` that is not a witness generator.
+    fn aux_slice(&self) -> &[Scalar] {
+        assert!(self.is_witness_generator());
+        unimplemented!()
+    }
 }
 
 /// This is a "namespaced" constraint system which borrows a constraint system (pushing
@@ -305,6 +325,13 @@ impl<'cs, Scalar: PrimeField, CS: ConstraintSystem<Scalar>> ConstraintSystem<Sca
 
     fn allocate_empty(&mut self, aux_n: usize, inputs_n: usize) -> (&mut [Scalar], &mut [Scalar]) {
         self.0.allocate_empty(aux_n, inputs_n)
+    }
+
+    fn inputs_slice(&self) -> &[Scalar] {
+        self.0.inputs_slice()
+    }
+    fn aux_slice(&self) -> &[Scalar] {
+        self.0.aux_slice()
     }
 }
 
@@ -408,5 +435,13 @@ impl<'cs, Scalar: PrimeField, CS: ConstraintSystem<Scalar>> ConstraintSystem<Sca
 
     fn allocate_empty_aux(&mut self, n: usize) -> &mut [Scalar] {
         (**self).allocate_empty_aux(n)
+    }
+
+    fn inputs_slice(&self) -> &[Scalar] {
+        (**self).inputs_slice()
+    }
+
+    fn aux_slice(&self) -> &[Scalar] {
+        (**self).aux_slice()
     }
 }
