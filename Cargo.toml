@@ -34,9 +34,8 @@ serde = { version = "1.0", features = ["derive"] }
 sha2 = "0.10.6"
 pairing = "0.23"
 blstrs = { version = "0.7.0", features = ["__private_bench"] }
-ec-gpu = { version = "0.2.0" }
-ec-gpu-gen = { version = "0.6.0" }
-
+ec-gpu = { git = "https://github.com/lurk-lab/ec-gpu.git", branch = "dev" }
+ec-gpu-gen = { git = "https://github.com/lurk-lab/ec-gpu.git", branch = "dev" }
 
 fs2 = { version = "0.4.3", optional = true }
 
@@ -90,5 +89,5 @@ members = [
 
 [build-dependencies]
 blstrs = { version = "0.7.0", features = ["__private_bench"] }
-ec-gpu-gen = { version = "0.6.0" }
+ec-gpu-gen = { git = "https://github.com/lurk-lab/ec-gpu.git", branch = "dev" }
 rustversion = "1.0.6"
