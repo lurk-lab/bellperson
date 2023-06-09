@@ -40,7 +40,7 @@ pub trait SizedWitness<Scalar: PrimeField> {
     }
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 /// A `ConstraintSystem` which calculates witness values for a concrete instance of an R1CS circuit.
 pub struct WitnessCS<Scalar>
 where
