@@ -25,6 +25,41 @@ impl<Scalar: PrimeField> Clone for AllocatedNum<Scalar> {
 }
 
 impl<Scalar: PrimeField> AllocatedNum<Scalar> {
+    /// Initialize a `Variable(Aux)` in a `ConstraintSystem`.
+    /// `self.value` is `None`.
+    pub fn initialize() -> Self {
+        AllocatedNum {
+            value: None,
+            variable: Variable(crate::Index::Aux(0)),
+        }
+    }
+
+    /// Assign an already initialized `Variable(Aux)` in a `ConstraintSystem`.
+    pub fn assign<CS, F>(&mut self, mut cs: CS, value: F) -> Result<(), SynthesisError>
+    where
+        CS: ConstraintSystem<Scalar>,
+        F: FnOnce() -> Result<Scalar, SynthesisError>,
+    {
+        assert!(self.value.is_none(), "can only assign an initialized AllocatedNum");
+
+        let mut new_value = None;
+        let var = cs.alloc(
+            || "num",
+            || {
+                let tmp = value()?;
+
+                new_value = Some(tmp);
+
+                Ok(tmp)
+            },
+        )?;
+
+        self.value = new_value;
+        self.variable = var;
+
+        Ok(())
+    }
+
     /// Allocate a `Variable(Aux)` in a `ConstraintSystem`.
     pub fn alloc<CS, F>(mut cs: CS, value: F) -> Result<Self, SynthesisError>
     where
@@ -263,6 +298,38 @@ impl<Scalar: PrimeField> AllocatedNum<Scalar> {
         cs.enforce(|| "unpacking constraint", |lc| lc, |lc| lc, |_| lc);
 
         Ok(bits.into_iter().map(Boolean::from).collect())
+    }
+
+    pub fn add<CS>(&self, mut cs: CS, other: &Self) -> Result<Self, SynthesisError>
+    where
+        CS: ConstraintSystem<Scalar>,
+    {
+        let mut value = None;
+
+        let var = cs.alloc(
+            || "sum num",
+            || {
+                let mut tmp = *self.value.get()?;
+                tmp.add_assign(other.value.get()?);
+
+                value = Some(tmp);
+
+                Ok(tmp)
+            },
+        )?;
+
+        // Constrain: a * b = ab
+        cs.enforce(
+            || "addition constraint",
+            |lc| lc + self.variable + other.variable,
+            |lc| lc + CS::one(),
+            |lc| lc + var,
+        );
+
+        Ok(AllocatedNum {
+            value,
+            variable: var,
+        })
     }
 
     pub fn mul<CS>(&self, mut cs: CS, other: &Self) -> Result<Self, SynthesisError>

@@ -10,6 +10,7 @@ pub mod multipack;
 pub mod num;
 pub mod sha256;
 pub mod uint32;
+pub mod circom_sha256;
 
 use crate::SynthesisError;
 
