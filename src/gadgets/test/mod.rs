@@ -9,6 +9,11 @@ use blake2s_simd::{Params as Blake2sParams, State as Blake2sState};
 use byteorder::{BigEndian, ByteOrder};
 use ff::PrimeField;
 
+use crate::gadgets::boolean::AllocatedBit;
+use crate::gadgets::boolean::Boolean;
+use crate::gadgets::circom::sha256::sigma::small_sigma;
+use crate::gadgets::num::AllocatedNum;
+use crate::gadgets::sha256::sha256;
 use crate::{ConstraintSystem, Index, LinearCombination, SynthesisError, Variable};
 
 #[derive(Debug)]
@@ -459,4 +464,32 @@ fn test_cs() {
     }
 
     assert!(cs.get("test1/test2/hehe") == Fr::ONE);
+}
+
+#[test]
+fn test_circom_cs() {
+    use blstrs::Scalar as Fr;
+
+    let mut cs = TestConstraintSystem::<Fr>::new();
+    let __in = [0u64, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1];
+    let __in: Vec<AllocatedNum<Fr>> = __in.iter().enumerate().map(|(idx, &i)| {
+        AllocatedNum::alloc(cs.namespace(|| format!("{idx}")), || {
+            Ok(Fr::from(i))
+        }).unwrap()
+    }).collect();
+    small_sigma(cs.namespace(|| "small_sigma"), 4, 8, 16, &__in).unwrap();
+    println!("num constraints: {}", cs.num_constraints());
+}
+
+#[test]
+fn test_sha256_size() {
+    use blstrs::Scalar as Fr;
+
+    let mut cs = TestConstraintSystem::<Fr>::new();
+    let __in = [0u64; 512];
+    let __in: Vec<Boolean> = __in.iter().enumerate().map(|(idx, &i)| {
+        AllocatedBit::alloc(cs.namespace(|| format!("{idx}")), Some(i > 0)).unwrap().into()
+    }).collect();
+    sha256(cs.namespace(|| "sha256"), &__in).unwrap();
+    println!("num constraints: {}", cs.num_constraints());
 }

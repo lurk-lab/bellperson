@@ -1,9 +1,9 @@
 use std::vec;
 
-use crate::{gadgets::num::AllocatedNum, ConstraintSystem, SynthesisError};
+use crate::{gadgets::{num::AllocatedNum, circom::CircomTemplate}, ConstraintSystem, SynthesisError};
 use ff::PrimeField;
 
-use crate::gadgets::circom_sha256::value;
+use crate::gadgets::circom::sha256::value;
 
 pub struct XOr3<F: PrimeField> {
     pub n: usize,
@@ -23,8 +23,15 @@ impl<F: PrimeField> XOr3<F> {
             out: vec![AllocatedNum::initialize(); n],
         }
     }
+}
 
-    pub fn force<CS: ConstraintSystem<F>>(&mut self, cs: CS) -> Result<(), SynthesisError> {
+impl<F: PrimeField> CircomTemplate<F> for XOr3<F> {
+    type Target = ();
+
+    fn generate_output_signal<CS>(&mut self, cs: CS) -> Result<Self::Target, SynthesisError>
+    where
+        CS: ConstraintSystem<F>,
+    {
         self.out = xor3(cs, self.n, &self.a, &self.b, &self.c)?;
         Ok(())
     }

@@ -1,7 +1,7 @@
-use crate::{gadgets::num::AllocatedNum, ConstraintSystem, SynthesisError};
+use crate::{gadgets::{num::AllocatedNum, circom::CircomTemplate}, ConstraintSystem, SynthesisError};
 use ff::PrimeField;
 
-use crate::gadgets::circom_sha256::{constrain_equals, value};
+use crate::gadgets::circom::sha256::{constrain_equals, value};
 
 pub struct RotR<F: PrimeField> {
     pub n: usize,
@@ -19,8 +19,15 @@ impl<F: PrimeField> RotR<F> {
             out: vec![AllocatedNum::initialize(); n],
         }
     }
+}
 
-    pub fn force<CS: ConstraintSystem<F>>(&mut self, cs: CS) -> Result<(), SynthesisError> {
+impl<F: PrimeField> CircomTemplate<F> for RotR<F> {
+    type Target = ();
+
+    fn generate_output_signal<CS>(&mut self, cs: CS) -> Result<Self::Target, SynthesisError>
+    where
+        CS: ConstraintSystem<F>,
+    {
         self.out = rotr(cs, self.n, self.r, &self.__in)?;
         Ok(())
     }

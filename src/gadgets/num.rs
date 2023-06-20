@@ -27,6 +27,12 @@ impl<Scalar: PrimeField> Clone for AllocatedNum<Scalar> {
 impl<Scalar: PrimeField> AllocatedNum<Scalar> {
     /// Initialize a `Variable(Aux)` in a `ConstraintSystem`.
     /// `self.value` is `None`.
+    /// 
+    /// # Note
+    /// 
+    /// This is a hack to represent a "initialized but unassigned value" in circom,
+    /// i.e. an array declaration `signal input in[32]`. Then we don't have to deal
+    /// with `Option<AllocatedNum<F>>` everywhere.
     pub fn initialize() -> Self {
         AllocatedNum {
             value: None,
@@ -35,6 +41,12 @@ impl<Scalar: PrimeField> AllocatedNum<Scalar> {
     }
 
     /// Assign an already initialized `Variable(Aux)` in a `ConstraintSystem`.
+    /// 
+    /// # Note
+    /// 
+    /// This is a hack to represent "assigning an initialized value" in circom,
+    /// i.e. an array declaration `in[32] <== 0`. Then we don't have to deal
+    /// with `Option<AllocatedNum<F>>` everywhere.
     pub fn assign<CS, F>(&mut self, mut cs: CS, value: F) -> Result<(), SynthesisError>
     where
         CS: ConstraintSystem<Scalar>,

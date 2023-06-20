@@ -1,8 +1,11 @@
-use crate::{gadgets::num::AllocatedNum, ConstraintSystem, SynthesisError};
+use crate::{
+    gadgets::{circom::CircomTemplate, num::AllocatedNum},
+    ConstraintSystem, SynthesisError,
+};
 use ff::PrimeField;
 
-use crate::gadgets::circom_sha256::{
-    value, shift::Shr, rotate::RotR, constrain_equals, xor3::XOr3,
+use crate::gadgets::circom::sha256::{
+    constrain_equals, rotate::RotR, shift::Shr, value, xor3::XOr3,
 };
 
 struct SmallSigma<F: PrimeField> {
@@ -23,12 +26,20 @@ impl<F: PrimeField> SmallSigma<F> {
             out: vec![AllocatedNum::initialize(); 32],
         }
     }
+}
 
-    pub fn force<CS: ConstraintSystem<F>>(mut self, cs: CS) -> Result<(), SynthesisError> {
+impl<F: PrimeField> CircomTemplate<F> for SmallSigma<F> {
+    type Target = ();
+
+    fn generate_output_signal<CS>(&mut self, cs: CS) -> Result<Self::Target, SynthesisError>
+    where
+        CS: ConstraintSystem<F>,
+    {
         self.out = small_sigma(cs, self.ra, self.rb, self.rc, &self.__in)?;
         Ok(())
     }
 }
+
 pub fn small_sigma<F: PrimeField, CS: ConstraintSystem<F>>(
     mut cs: CS,
     ra: usize,
@@ -52,9 +63,9 @@ pub fn small_sigma<F: PrimeField, CS: ConstraintSystem<F>>(
         k += 1;
     }
 
-    rota.force(cs.namespace(|| "rota"))?;
-    rotb.force(cs.namespace(|| "rotb"))?;
-    shrc.force(cs.namespace(|| "shrc"))?;
+    rota.generate_output_signal(cs.namespace(|| "rota"))?;
+    rotb.generate_output_signal(cs.namespace(|| "rotb"))?;
+    shrc.generate_output_signal(cs.namespace(|| "shrc"))?;
 
     let mut xor3: XOr3<F> = XOr3::new(32);
 
@@ -66,7 +77,7 @@ pub fn small_sigma<F: PrimeField, CS: ConstraintSystem<F>>(
         k += 1;
     }
 
-    xor3.force(cs.namespace(|| "xor3"))?;
+    xor3.generate_output_signal(cs.namespace(|| "xor3"))?;
 
     k = 0;
     while k < 32 {
