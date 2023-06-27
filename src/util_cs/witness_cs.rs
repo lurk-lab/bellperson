@@ -158,12 +158,28 @@ where
         (allocated_aux, allocated_inputs)
     }
 
+    fn assign_input(&mut self, n: usize, f: Scalar) {
+        self.input_assignment[n] = f;
+    }
+
+    fn assign_aux(&mut self, n: usize, f: Scalar) {
+        self.aux_assignment[n] = f;
+    }
+
     fn inputs_slice(&self) -> &[Scalar] {
         &self.input_assignment
     }
 
     fn aux_slice(&self) -> &[Scalar] {
         &self.aux_assignment
+    }
+
+    fn inputs_slice_mut(&mut self) -> &mut [Scalar] {
+        &mut self.input_assignment
+    }
+
+    fn aux_slice_mut(&mut self) -> &mut [Scalar] {
+        &mut self.aux_assignment
     }
 }
 

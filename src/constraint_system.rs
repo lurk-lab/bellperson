@@ -225,6 +225,26 @@ pub trait ConstraintSystem<Scalar: PrimeField>: Sized + Send {
         unimplemented!()
     }
 
+    /// Assign a empty input of the `ConstraintSystem`.
+    ///
+    /// # Panics
+    ///
+    /// Panics if called on a `ConstraintSystem` that is not a witness generator.
+    fn assign_input(&mut self, _n: usize, _f: F) {
+        assert!(self.is_witness_generator());
+        unimplemented!()
+    }
+
+    /// Assign a empty aux witness of the `ConstraintSystem`.
+    ///
+    /// # Panics
+    ///
+    /// Panics if called on a `ConstraintSystem` that is not a witness generator.
+    fn assign_aux(&mut self, _n: usize, _f: Scalar) {
+        assert!(self.is_witness_generator());
+        unimplemented!()
+    }
+
     /// Returns the constraint system's inputs as a slice of `Scalar`s.
     ///
     /// # Panics
@@ -241,6 +261,26 @@ pub trait ConstraintSystem<Scalar: PrimeField>: Sized + Send {
     ///
     /// Panics if called on a `ConstraintSystem` that is not a witness generator.
     fn aux_slice(&self) -> &[Scalar] {
+        assert!(self.is_witness_generator());
+        unimplemented!()
+    }
+
+    /// Returns the constraint system's inputs as a mutable slice of `Scalar`s.
+    ///
+    /// # Panics
+    ///
+    /// Panics if called on a `ConstraintSystem` that is not a witness generator.
+    fn inputs_slice_mut(&mut self) -> &mut [Scalar] {
+        assert!(self.is_witness_generator());
+        unimplemented!()
+    }
+
+    /// Returns the constraint system's aux witness as a mutable slice of `Scalar`s.
+    ///
+    /// # Panics
+    ///
+    /// Panics if called on a `ConstraintSystem` that is not a witness generator.
+    fn aux_slice_mut(&mut self) -> &mut [Scalar] {
         assert!(self.is_witness_generator());
         unimplemented!()
     }
