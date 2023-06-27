@@ -166,6 +166,14 @@ where
         self.aux_assignment[n] = f;
     }
 
+    fn get_input(&mut self, n: usize) -> Scalar {
+        self.input_assignment[n]
+    }
+
+    fn get_aux(&mut self, n: usize) -> Scalar {
+        self.aux_assignment[n]
+    }
+
     fn inputs_slice(&self) -> &[Scalar] {
         &self.input_assignment
     }
