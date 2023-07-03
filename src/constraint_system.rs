@@ -230,7 +230,7 @@ pub trait ConstraintSystem<Scalar: PrimeField>: Sized + Send {
     /// # Panics
     ///
     /// Panics if called on a `ConstraintSystem` that is not a witness generator.
-    fn assign_input(&mut self, _n: usize, _f: F) {
+    fn assign_input(&mut self, _n: usize, _f: Scalar) {
         assert!(self.is_witness_generator());
         unimplemented!()
     }
