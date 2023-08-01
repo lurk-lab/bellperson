@@ -18,7 +18,7 @@ edition = "2021"
 rust-version = "1.66"
 
 [dependencies]
-bellpepper-core = { version = "0.2" }
+bellpepper-core = { git = "https://github.com/lurk-lab/bellpepper.git", branch = "dev" }
 blake2s_simd = "1.0.0"
 ff = "0.13.0"
 group = "0.13.0"
