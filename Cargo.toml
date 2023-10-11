@@ -15,10 +15,10 @@ repository = "https://github.com/filecoin-project/bellman"
 version = "0.26.0"
 readme = "README.md"
 edition = "2021"
-rust-version = "1.64.0"
+rust-version = "1.70.0"
 
 [dependencies]
-bellpepper-core = { git = "https://github.com/lurk-lab/bellpepper.git", branch = "dev" }
+bellpepper-core = { git = "https://github.com/lurk-lab/bellpepper.git", branch = "benchmarks" }
 blake2s_simd = "1.0.0"
 ff = "0.13.0"
 group = "0.13.0"
