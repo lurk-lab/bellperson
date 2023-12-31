@@ -1,3 +1,6 @@
+> [!WARNING]
+> Technical fork, no longer actively maintained.
+
 # bellperson [![Crates.io](https://img.shields.io/crates/v/bellperson.svg)](https://crates.io/crates/bellperson)
 
 > This is a fork of the great [bellman](https://github.com/zkcrypto/bellman) library.
